@@ -2,7 +2,7 @@ import { useState } from "react";
 import AudioPlayer from "./AudioPlayer";
 
 export default function EpisodeCard({ episode, index = 0 }) {
-  const { title, date, duration, description, src, tags } = episode;
+  const { title, date, duration, description, src } = episode;
   const [hovered, setHovered] = useState(false);
 
   return (
@@ -23,9 +23,7 @@ export default function EpisodeCard({ episode, index = 0 }) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* Top row */}
       <div style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
-        {/* Episode number badge */}
         <div
           style={{
             flexShrink: 0,
@@ -47,27 +45,7 @@ export default function EpisodeCard({ episode, index = 0 }) {
         </div>
 
         <div style={{ flex: 1, minWidth: 0 }}>
-          {/* Tags */}
-          <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 6 }}>
-            {tags.map(tag => (
-              <span
-                key={tag}
-                style={{
-                  fontSize: 11,
-                  fontWeight: 600,
-                  letterSpacing: "0.06em",
-                  textTransform: "uppercase",
-                  padding: "2px 8px",
-                  borderRadius: 99,
-                  background: "rgba(245,200,66,0.1)",
-                  color: "var(--gold)",
-                  border: "1px solid rgba(245,200,66,0.2)",
-                }}
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
+          
 
           <h3
             style={{

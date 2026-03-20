@@ -1,39 +1,30 @@
 export const EPISODES = [
   {
     id: 1,
-    title: "Episodio 1 – Bienvenida al podcast",
+    title: "Sekiro: morir 200 veces también es gameplay",
     date: "10 Mar 2026",
-    duration: "24:35",
+    duration: "1:05",
     description:
-      "En este primer episodio te contamos de qué trata el podcast, quiénes somos y qué puedes esperar de cada entrega.",
-    src: "episodes/episodio1.mp3", 
-    tags: ["Introducción", "Presentación"],
+      "Un viaje de humillación constante donde aprendimos que el parry no es lo nuestro.",
+    src: "episodes/episodio1_sekiro.mp3", 
   },
   {
     id: 2,
-    title: "Episodio 2 – El arte de la edición de audio",
+    title: "Zelda BOTW: 100 horas jugando y seguimos siendo inútiles",
     date: "17 Mar 2026",
-    duration: "31:10",
+    duration: "1:10",
     description:
-      "Exploramos las herramientas básicas de Audacity y cómo conseguir un sonido limpio y profesional desde casa.",
-    src: "",
-    tags: ["Producción", "Audacity"],
+      "Libertad total para hacer el ridículo por todo Hyrule.",
+    src: "episodes/episodio2_zelda.mp3",
   },
   {
     id: 3,
-    title: "Episodio 3 – Diseño web para creadores",
+    title: "Hollow Knight: nos caemos más que luchamos",
     date: "24 Mar 2026",
-    duration: "28:50",
+    duration: "1:05",
     description:
-      "Cómo construir tu propio sitio web para alojar un podcast usando React y Tailwind CSS.",
-    src: "",
-    tags: ["Web", "React"],
+      "Venimos por el arte… nos quedamos por las muertes constantes.",
+    src: "episodes/episodio3_hollow.mp3",
   },
 ];
 
-export const TOOLS = [
-  { name: "Audacity", icon: "🎙️", desc: "Grabación y edición de audio" },
-  { name: "FFmpeg", icon: "⚙️", desc: "Compresión y conversión de archivos" },
-  { name: "React", icon: "⚛️", desc: "Interfaz de usuario interactiva" },
-  { name: "Tailwind CSS", icon: "🎨", desc: "Estilos rápidos y responsivos" },
-];

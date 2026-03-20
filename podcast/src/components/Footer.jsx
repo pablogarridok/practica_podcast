@@ -21,10 +21,10 @@ export default function Footer() {
           color: "var(--gold)",
         }}
       >
-        MiPodcast
+        Mandos Rotos
       </span>
       <p style={{ color: "var(--muted2)", fontSize: 13, margin: 0 }}>
-        © 2026 · Practica  · 
+        © 2026 ·  
       </p>
       
     </footer>

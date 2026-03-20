@@ -1,8 +1,10 @@
 import AudioPlayer from "../components/AudioPlayer";
 import { EPISODES } from "../data/episodes";
+import { useState } from "react";
 
 export default function Home({ setPage }) {
   const latest = EPISODES[0];
+  const [muted, setMuted] = useState(true);
 
   return (
     <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 28px 80px" }}>
@@ -20,26 +22,7 @@ export default function Home({ setPage }) {
       >
         <div className="animate-fade-up" style={{ display: "flex", flexDirection: "column", gap: 22 }}>
           {/* Badge */}
-          <span
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 7,
-              background: "rgba(245,200,66,0.1)",
-              border: "1px solid rgba(245,200,66,0.25)",
-              color: "var(--gold)",
-              fontSize: 11,
-              fontWeight: 700,
-              letterSpacing: "0.1em",
-              textTransform: "uppercase",
-              padding: "5px 12px",
-              borderRadius: 99,
-              width: "fit-content",
-            }}
-          >
-            <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--gold)", animation: "pulse-ring 1.8s infinite" }} />
-            Nuevo episodio disponible
-          </span>
+         
 
           <h1
             style={{
@@ -52,8 +35,8 @@ export default function Home({ setPage }) {
               letterSpacing: "-0.02em",
             }}
           >
-            Tu podcast,{" "}
-            <em style={{ color: "var(--gold)", fontStyle: "italic" }}>tu historia.</em>
+            Jugamos mal,{" "}
+            <em style={{ color: "var(--gold)", fontStyle: "italic" }}>opinamos peor.</em>
           </h1>
 
           <p
@@ -66,10 +49,9 @@ export default function Home({ setPage }) {
               maxWidth: 480,
             }}
           >
-            Bienvenido a{" "}
-            <strong style={{ color: "var(--text)" }}>MiPodcast</strong>, un espacio
-            donde exploramos tecnología, creatividad y todo lo que nos apasiona.
-            Nuevos episodios cada semana.
+            En{" "}
+            <strong style={{ color: "var(--text)" }}>Mandos Rotos</strong>, morimos en el tutorial y culpamos al lag,
+            aun asi venimos a opinar sin ningun tipo de vergüenza. Si pestañeas no te lo pierdes.
           </p>
 
           <div
@@ -141,27 +123,46 @@ export default function Home({ setPage }) {
                 borderRadius: "50%",
               }}
             />
-            🎙️
+
+            {/* Video */}
+            <video
+              src="/assets/video_podcast.mp4"
+              autoPlay
+              loop
+              muted={muted}
+              playsInline
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                borderRadius: 32,
+                position: "absolute",
+                inset: 0,
+              }}
+            />
+
+            {/* Botón mute/unmute */}
+            <button
+              onClick={() => setMuted(m => !m)}
+              style={{
+                position: "absolute",
+                bottom: 12,
+                left: 12,
+                zIndex: 10,
+                background: "rgba(0,0,0,0.5)",
+                border: "1px solid rgba(255,255,255,0.2)",
+                borderRadius: 8,
+                color: "white",
+                fontSize: 18,
+                padding: "4px 8px",
+                cursor: "pointer",
+              }}
+            >
+              {muted ? "🔇" : "🔊"}
+            </button>
           </div>
-          <div
-            style={{
-              position: "absolute",
-              bottom: -16,
-              right: -16,
-              width: 72,
-              height: 72,
-              borderRadius: 18,
-              background: "var(--surface2)",
-              border: "1px solid var(--border)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 30,
-              boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
-            }}
-          >
-            🎧
-          </div>
+
+          
         </div>
       </section>
 
@@ -225,59 +226,6 @@ export default function Home({ setPage }) {
           </span>
         </div>
         <AudioPlayer src={latest.src} />
-      </section>
-
-      {/* ── Stats ───────────────────────────────────────── */}
-      <section
-        className="animate-fade-up animate-delay-4"
-        style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16 }}
-      >
-        {[
-          { value: EPISODES.length, label: "Episodios" },
-          { value: "4.9 ★", label: "Valoración" },
-          { value: "Semanal", label: "Frecuencia" },
-        ].map((s) => (
-          <div
-            key={s.label}
-            style={{
-              background: "var(--surface)",
-              border: "1px solid var(--border)",
-              borderRadius: 18,
-              padding: "28px 20px",
-              textAlign: "center",
-              position: "relative",
-              overflow: "hidden",
-            }}
-          >
-            {/* Decorative top accent line */}
-            <div
-              style={{
-                position: "absolute",
-                top: 0,
-                left: "25%",
-                right: "25%",
-                height: 2,
-                background: "linear-gradient(90deg, transparent, var(--gold), transparent)",
-                borderRadius: 99,
-              }}
-            />
-            <p
-              style={{
-                margin: 0,
-                fontFamily: "'Playfair Display', serif",
-                fontWeight: 900,
-                fontSize: 36,
-                color: "var(--gold)",
-                lineHeight: 1,
-              }}
-            >
-              {s.value}
-            </p>
-            <p style={{ margin: "6px 0 0", fontSize: 12, color: "var(--muted2)", letterSpacing: "0.06em", textTransform: "uppercase", fontWeight: 500 }}>
-              {s.label}
-            </p>
-          </div>
-        ))}
       </section>
     </div>
   );

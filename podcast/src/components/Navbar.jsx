@@ -39,21 +39,7 @@ export default function Navbar({ active, setPage }) {
             gap: 10,
           }}
         >
-          <span
-            style={{
-              width: 36,
-              height: 36,
-              borderRadius: 10,
-              background: "var(--gold)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 18,
-              flexShrink: 0,
-            }}
-          >
-            🎙
-          </span>
+          <img src="assets/logo.png" alt="" style={{ width: 36, height: 36, objectFit: "contain", borderRadius: 7 }} />                
           <span
             style={{
               fontFamily: "'Playfair Display', Georgia, serif",
@@ -63,7 +49,7 @@ export default function Navbar({ active, setPage }) {
               letterSpacing: "-0.02em",
             }}
           >
-            MiPodcast
+            Mandos Rotos
           </span>
         </button>
 

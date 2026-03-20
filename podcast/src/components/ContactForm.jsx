@@ -71,9 +71,9 @@ export default function ContactForm({ onSuccess }) {
           onFocus={() => setFocused("subject")}
           onBlur={() => setFocused(null)}
         >
-          <option value="sugerencia">💡 Sugerencia de tema</option>
-          <option value="colaboracion">🤝 Quiero colaborar</option>
-          <option value="otro">✉️ Otro</option>
+          <option value="sugerencia">Sugerencia de tema</option>
+          <option value="colaboracion">Quiero colaborar</option>
+          <option value="otro">Otro</option>
         </select>
       </div>
 
@@ -111,7 +111,7 @@ export default function ContactForm({ onSuccess }) {
         onMouseEnter={e => { e.currentTarget.style.background = "#f7d564"; e.currentTarget.style.transform = "translateY(-1px)"; }}
         onMouseLeave={e => { e.currentTarget.style.background = "var(--gold)"; e.currentTarget.style.transform = "none"; }}
       >
-        Enviar mensaje 🚀
+        Enviar mensaje
       </button>
     </form>
   );

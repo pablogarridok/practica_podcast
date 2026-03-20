@@ -28,7 +28,6 @@ export default function Navbar({ active, setPage }) {
           justifyContent: "space-between",
         }}
       >
-        {/* Logo */}
         <button
           onClick={() => setPage("home")}
           style={{
@@ -53,7 +52,6 @@ export default function Navbar({ active, setPage }) {
           </span>
         </button>
 
-        {/* Nav links */}
         <nav style={{ display: "flex", gap: 4 }}>
           {LINKS.map((link) => {
             const isActive = active === link.id;

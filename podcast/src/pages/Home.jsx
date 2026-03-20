@@ -9,7 +9,6 @@ export default function Home({ setPage }) {
   return (
     <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 28px 80px" }}>
 
-      {/* ── Hero ─────────────────────────────────────────── */}
       <section
         style={{
           display: "grid",
@@ -21,7 +20,6 @@ export default function Home({ setPage }) {
         }}
       >
         <div className="animate-fade-up" style={{ display: "flex", flexDirection: "column", gap: 22 }}>
-          {/* Badge */}
          
 
           <h1
@@ -95,7 +93,6 @@ export default function Home({ setPage }) {
           </div>
         </div>
 
-        {/* Cover art */}
         <div
           className="animate-fade-up animate-delay-2"
           style={{ position: "relative" }}
@@ -114,7 +111,6 @@ export default function Home({ setPage }) {
               overflow: "hidden",
             }}
           >
-            {/* Decorative ring */}
             <div
               style={{
                 position: "absolute",
@@ -124,7 +120,6 @@ export default function Home({ setPage }) {
               }}
             />
 
-            {/* Video */}
             <video
               src="/assets/video_podcast.mp4"
               autoPlay
@@ -141,7 +136,6 @@ export default function Home({ setPage }) {
               }}
             />
 
-            {/* Botón mute/unmute */}
             <button
               onClick={() => setMuted(m => !m)}
               style={{
@@ -166,7 +160,6 @@ export default function Home({ setPage }) {
         </div>
       </section>
 
-      {/* ── Latest episode player ────────────────────────── */}
       <section
         className="animate-fade-up animate-delay-3"
         style={{

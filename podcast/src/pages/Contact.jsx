@@ -112,7 +112,6 @@ export default function Contact() {
         <ContactForm onSuccess={() => setSent(true)} />
       </div>
 
-      {/* License */}
       <div
         className="animate-fade-up animate-delay-2"
         style={{

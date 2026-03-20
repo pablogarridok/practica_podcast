@@ -5,7 +5,6 @@ export default function Episodes() {
   return (
     <div style={{ maxWidth: 1100, margin: "0 auto", padding: "100px 28px 80px" }}>
 
-      {/* Header */}
       <div className="animate-fade-up" style={{ marginBottom: 48 }}>
         
         <h2

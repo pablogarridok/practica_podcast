@@ -18,7 +18,6 @@ export default function AudioPlayer({ src, mini = false }) {
     >
       <audio ref={audioRef} src={src || undefined} preload="metadata" />
 
-      {/* Play/Pause button */}
       <button
         onClick={toggle}
         aria-label={playing ? "Pausar" : "Reproducir"}
@@ -42,7 +41,6 @@ export default function AudioPlayer({ src, mini = false }) {
         {playing ? "⏸" : "▶"}
       </button>
 
-      {/* Progress */}
       <div style={{ flex: 1, minWidth: 0 }}>
         <div
           style={{

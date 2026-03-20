@@ -64,7 +64,6 @@ export default function EpisodeCard({ episode, index = 0 }) {
           </p>
         </div>
 
-        {/* Meta */}
         <div
           style={{
             flexShrink: 0,

@@ -26,7 +26,7 @@ export default function App() {
         flexDirection: "column",
       }}
     >
-      {/* Subtle radial glow behind hero */}
+      {}
       <div
         aria-hidden
         style={{

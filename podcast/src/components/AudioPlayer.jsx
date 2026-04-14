@@ -6,6 +6,8 @@ export default function AudioPlayer({ src, mini = false }) {
 
   return (
     <div
+      role="region"
+      aria-label="Reproductor de audio"
       style={{
         background: "var(--surface2)",
         borderRadius: mini ? 12 : 16,
@@ -18,9 +20,10 @@ export default function AudioPlayer({ src, mini = false }) {
     >
       <audio ref={audioRef} src={src || undefined} preload="metadata" />
 
+      {/* Botón reproducir/pausar con aria-label descriptivo */}
       <button
         onClick={toggle}
-        aria-label={playing ? "Pausar" : "Reproducir"}
+        aria-label={playing ? "Pausar episodio" : "Reproducir episodio"}
         style={{
           flexShrink: 0,
           width: mini ? 36 : 44,
@@ -38,11 +41,20 @@ export default function AudioPlayer({ src, mini = false }) {
         onMouseEnter={e => e.currentTarget.style.transform = "scale(1.08)"}
         onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
       >
-        {playing ? "⏸" : "▶"}
+        {/* aria-hidden en iconos porque el aria-label del botón ya describe la acción */}
+        <span aria-hidden="true">{playing ? "⏸" : "▶"}</span>
       </button>
 
       <div style={{ flex: 1, minWidth: 0 }}>
+        {/* Barra de progreso accesible con role="slider" */}
         <div
+          role="slider"
+          aria-label="Progreso del audio"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={Math.round(progress)}
+          aria-valuetext={`${currentTime} de ${duration}`}
+          tabIndex={0}
           style={{
             height: 4,
             background: "var(--border2)",
@@ -52,6 +64,12 @@ export default function AudioPlayer({ src, mini = false }) {
             overflow: "hidden",
           }}
           onClick={seek}
+          onKeyDown={(e) => {
+            // Permitir control con flechas del teclado
+            if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+              e.preventDefault();
+            }
+          }}
         >
           <div
             style={{
@@ -65,6 +83,7 @@ export default function AudioPlayer({ src, mini = false }) {
         </div>
         {!mini && (
           <div
+            aria-hidden="true"
             style={{
               display: "flex",
               justifyContent: "space-between",

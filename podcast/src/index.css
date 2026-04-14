@@ -10,8 +10,8 @@
   --gold-dim:  rgba(245,200,66,0.18);
   --gold-soft: rgba(245,200,66,0.08);
   --text:      #f0ede8;
-  --muted:     #8a8798;
-  --muted2:    #5a5868;
+  --muted:     #9e9aac;   /* Mejorado de #8a8798 para contraste 4.5:1 */
+  --muted2:    #6e6b7c;   /* Mejorado de #5a5868 para contraste mínimo */
 
   font-family: 'DM Sans', system-ui, sans-serif;
   line-height: 1.6;
@@ -31,10 +31,68 @@ a { color: var(--gold); text-decoration: none; }
 button { font-family: inherit; cursor: pointer; border: none; }
 input, textarea, select { font-family: inherit; }
 
+/* ============================================
+   FOCO VISIBLE - OBLIGATORIO PARA ACCESIBILIDAD
+   Sin esto, los usuarios de teclado no saben
+   dónde están en la página.
+   ============================================ */
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ============================================
+   ENLACE SALTAR AL CONTENIDO
+   Visible solo al recibir foco con teclado.
+   Permite saltar el menú directamente al main.
+   ============================================ */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 16px;
+  z-index: 9999;
+  background: var(--gold);
+  color: #0c0c0e;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 10px 20px;
+  border-radius: 0 0 8px 8px;
+  text-decoration: none;
+  transition: top 0.2s;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid #0c0c0e;
+  outline-offset: 2px;
+}
+
+/* ============================================
+   SR-ONLY: Texto solo para lectores de pantalla
+   Visualmente oculto pero accesible.
+   ============================================ */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ============================================
+   SCROLLBAR
+   ============================================ */
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
 
+/* ============================================
+   ANIMACIONES
+   ============================================ */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -54,3 +112,26 @@ input, textarea, select { font-family: inherit; }
 .animate-delay-2  { animation-delay: 0.16s; }
 .animate-delay-3  { animation-delay: 0.25s; }
 .animate-delay-4  { animation-delay: 0.34s; }
+
+/* ============================================
+   MEJORA AVANZADA: prefers-reduced-motion
+   Si el usuario ha activado "reducir movimiento"
+   en su sistema operativo, eliminamos las
+   animaciones para evitar molestias.
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .animate-fade-up {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}

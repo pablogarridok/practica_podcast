@@ -10,6 +10,7 @@ export default function Home({ setPage }) {
     <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 28px 80px" }}>
 
       <section
+        aria-labelledby="hero-heading"
         style={{
           display: "grid",
           gridTemplateColumns: "1fr 420px",
@@ -20,9 +21,9 @@ export default function Home({ setPage }) {
         }}
       >
         <div className="animate-fade-up" style={{ display: "flex", flexDirection: "column", gap: 22 }}>
-         
 
           <h1
+            id="hero-heading"
             style={{
               margin: 0,
               fontFamily: "'Playfair Display', Georgia, serif",
@@ -48,8 +49,9 @@ export default function Home({ setPage }) {
             }}
           >
             En{" "}
-            <strong style={{ color: "var(--text)" }}>Mandos Rotos</strong>, morimos en el tutorial y culpamos al lag,
-            aun asi venimos a opinar sin ningun tipo de vergüenza. Si pestañeas no te lo pierdes.
+            <strong style={{ color: "var(--text)" }}>Mandos Rotos</strong>, morimos en el
+            tutorial y culpamos al lag, aun así venimos a opinar sin ningún tipo de vergüenza.
+            Si pestañeas no te lo pierdes.
           </p>
 
           <div
@@ -71,7 +73,7 @@ export default function Home({ setPage }) {
               onMouseEnter={e => { e.currentTarget.style.background = "#f7d564"; e.currentTarget.style.transform = "translateY(-1px)"; }}
               onMouseLeave={e => { e.currentTarget.style.background = "var(--gold)"; e.currentTarget.style.transform = "none"; }}
             >
-              Ver episodios →
+              Ver todos los episodios
             </button>
             <button
               onClick={() => setPage("contact")}
@@ -88,7 +90,7 @@ export default function Home({ setPage }) {
               onMouseEnter={e => { e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.borderColor = "var(--border2)"; }}
               onMouseLeave={e => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.borderColor = "var(--border)"; }}
             >
-              Participar
+              Participar en el podcast
             </button>
           </div>
         </div>
@@ -112,6 +114,7 @@ export default function Home({ setPage }) {
             }}
           >
             <div
+              aria-hidden="true"
               style={{
                 position: "absolute",
                 inset: -20,
@@ -120,12 +123,14 @@ export default function Home({ setPage }) {
               }}
             />
 
+            {/* Video decorativo: aria-hidden porque no aporta contenido informativo */}
             <video
               src="/assets/video_podcast.mp4"
               autoPlay
               loop
               muted={muted}
               playsInline
+              aria-hidden="true"
               style={{
                 width: "100%",
                 height: "100%",
@@ -136,8 +141,11 @@ export default function Home({ setPage }) {
               }}
             />
 
+            {/* Botón de silencio con aria-label descriptivo */}
             <button
               onClick={() => setMuted(m => !m)}
+              aria-label={muted ? "Activar sonido del vídeo" : "Silenciar vídeo"}
+              aria-pressed={!muted}
               style={{
                 position: "absolute",
                 bottom: 12,
@@ -152,15 +160,15 @@ export default function Home({ setPage }) {
                 cursor: "pointer",
               }}
             >
-              {muted ? "🔇" : "🔊"}
+              <span aria-hidden="true">{muted ? "🔇" : "🔊"}</span>
             </button>
           </div>
-
-          
         </div>
       </section>
 
+      {/* Sección del último episodio */}
       <section
+        aria-labelledby="latest-heading"
         className="animate-fade-up animate-delay-3"
         style={{
           background: "var(--surface)",
@@ -188,7 +196,9 @@ export default function Home({ setPage }) {
             >
               Empieza a escucharnos
             </p>
+            {/* h2 correcto: subtítulo dentro del main, debajo del h1 */}
             <h2
+              id="latest-heading"
               style={{
                 margin: 0,
                 fontFamily: "'Playfair Display', serif",
@@ -204,6 +214,7 @@ export default function Home({ setPage }) {
             </p>
           </div>
           <span
+            aria-label={`Duración: ${latest.duration}`}
             style={{
               flexShrink: 0,
               fontFamily: "'DM Mono', monospace",

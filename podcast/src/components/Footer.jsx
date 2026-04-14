@@ -11,6 +11,7 @@ export default function Footer() {
         gap: 12,
         maxWidth: 1100,
         margin: "0 auto",
+        width: "100%",
       }}
     >
       <span
@@ -24,9 +25,8 @@ export default function Footer() {
         Mandos Rotos
       </span>
       <p style={{ color: "var(--muted2)", fontSize: 13, margin: 0 }}>
-        © 2026 ·  
+        © 2026 Mandos Rotos · Todos los derechos reservados
       </p>
-      
     </footer>
   );
 }

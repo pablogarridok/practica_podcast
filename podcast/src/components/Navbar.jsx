@@ -28,8 +28,10 @@ export default function Navbar({ active, setPage }) {
           justifyContent: "space-between",
         }}
       >
+        {/* Logo con alt descriptivo y aria-label */}
         <button
           onClick={() => setPage("home")}
+          aria-label="Mandos Rotos – Ir a la página principal"
           style={{
             background: "none",
             padding: 0,
@@ -38,7 +40,8 @@ export default function Navbar({ active, setPage }) {
             gap: 10,
           }}
         >
-          <img src="assets/logo.png" alt="" style={{ width: 36, height: 36, objectFit: "contain", borderRadius: 7 }} />                
+          {/* alt="" porque el texto ya describe el logo */}
+          <img src="assets/logo.png" alt="" style={{ width: 36, height: 36, objectFit: "contain", borderRadius: 7 }} />
           <span
             style={{
               fontFamily: "'Playfair Display', Georgia, serif",
@@ -52,13 +55,16 @@ export default function Navbar({ active, setPage }) {
           </span>
         </button>
 
-        <nav style={{ display: "flex", gap: 4 }}>
+        {/* nav con aria-label para identificar este menú */}
+        <nav aria-label="Navegación principal" style={{ display: "flex", gap: 4 }}>
           {LINKS.map((link) => {
             const isActive = active === link.id;
             return (
               <button
                 key={link.id}
                 onClick={() => setPage(link.id)}
+                // aria-current indica la página activa a lectores de pantalla
+                aria-current={isActive ? "page" : undefined}
                 style={{
                   padding: "7px 16px",
                   borderRadius: 8,

@@ -26,7 +26,14 @@ export default function App() {
         flexDirection: "column",
       }}
     >
-      {}
+      {/* Enlace saltar al contenido - MEJORA OBLIGATORIA */}
+      <a
+        href="#main-content"
+        className="skip-link"
+      >
+        Saltar al contenido principal
+      </a>
+
       <div
         aria-hidden
         style={{
@@ -45,7 +52,8 @@ export default function App() {
 
       <Navbar active={page} setPage={setPage} />
 
-      <main style={{ flex: 1, position: "relative", zIndex: 1 }}>
+      {/* id="main-content" para que funcione el enlace saltar */}
+      <main id="main-content" style={{ flex: 1, position: "relative", zIndex: 1 }}>
         <PageComponent setPage={setPage} />
       </main>
 

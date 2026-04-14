@@ -1,38 +1,299 @@
-import { useRef } from "react";
+import { useState } from "react";
 
 export default function InformePDF() {
-  const contentRef = useRef(null);
+  const [generating, setGenerating] = useState(false);
 
   const downloadPDF = async () => {
-    // Cargar html2pdf dinámicamente desde CDN
-    if (!window.html2pdf) {
+    setGenerating(true);
+
+    // Cargar jsPDF si no está disponible
+    if (!window.jspdf) {
       await new Promise((resolve, reject) => {
         const script = document.createElement("script");
         script.src =
-          "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
+          "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
         script.onload = resolve;
         script.onerror = reject;
         document.head.appendChild(script);
       });
     }
 
-    const element = contentRef.current;
-    const options = {
-      margin: [15, 15, 15, 15],
-      filename: "informe-accesibilidad-mandos-rotos.pdf",
-      image: { type: "jpeg", quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true },
-      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
+
+    const today = new Date().toLocaleDateString("es-ES", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+
+    const pageW = doc.internal.pageSize.getWidth();
+    const pageH = doc.internal.pageSize.getHeight();
+    const marginL = 20;
+    const marginR = 20;
+    const marginT = 20;
+    const maxW = pageW - marginL - marginR;
+    let y = marginT;
+
+    const BLACK = [17, 17, 17];
+    const GRAY  = [100, 100, 100];
+    const GOLD  = [180, 140, 20];
+    const LINE  = [220, 220, 220];
+
+    const checkPage = (needed = 10) => {
+      if (y + needed > pageH - 15) {
+        doc.addPage();
+        y = marginT;
+      }
     };
 
-    window.html2pdf().set(options).from(element).save();
-  };
+    const addParagraph = (text) => {
+      checkPage(8);
+      doc.setFontSize(10);
+      doc.setTextColor(...BLACK);
+      doc.setFont("helvetica", "normal");
+      const lines = doc.splitTextToSize(text, maxW);
+      lines.forEach((line) => {
+        checkPage(6);
+        doc.text(line, marginL, y);
+        y += 5.5;
+      });
+      y += 2;
+    };
 
-  const today = new Date().toLocaleDateString("es-ES", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+    const addH2 = (text) => {
+      checkPage(14);
+      y += 5;
+      doc.setFontSize(13);
+      doc.setTextColor(...GOLD);
+      doc.setFont("helvetica", "bold");
+      doc.text(text, marginL, y);
+      y += 2;
+      doc.setDrawColor(...GOLD);
+      doc.setLineWidth(0.4);
+      doc.line(marginL, y, marginL + 45, y);
+      y += 6;
+    };
+
+    const addH3 = (text) => {
+      checkPage(10);
+      y += 2;
+      doc.setFontSize(10.5);
+      doc.setTextColor(...BLACK);
+      doc.setFont("helvetica", "bold");
+      doc.text(text, marginL, y);
+      y += 6;
+    };
+
+    const addMeta = (label, value) => {
+      checkPage(7);
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(...BLACK);
+      const lw = doc.getTextWidth(label + " ");
+      doc.text(label + " ", marginL, y);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(...GRAY);
+      doc.text(value, marginL + lw, y);
+      y += 6;
+    };
+
+    const addBullet = (text) => {
+      checkPage(7);
+      doc.setFontSize(10);
+      doc.setTextColor(...BLACK);
+      doc.setFont("helvetica", "normal");
+      const lines = doc.splitTextToSize(text, maxW - 6);
+      doc.text("•", marginL + 2, y);
+      lines.forEach((line) => {
+        checkPage(6);
+        doc.text(line, marginL + 7, y);
+        y += 5.5;
+      });
+    };
+
+    const addHR = () => {
+      checkPage(6);
+      y += 3;
+      doc.setDrawColor(...LINE);
+      doc.setLineWidth(0.3);
+      doc.line(marginL, y, pageW - marginR, y);
+      y += 5;
+    };
+
+    // ── CABECERA ───────────────────────────────────────────────
+    doc.setFillColor(...GOLD);
+    doc.rect(0, 0, pageW, 38, "F");
+    doc.setFontSize(20);
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("helvetica", "bold");
+    doc.text("Informe de Auditoría de Accesibilidad Web", marginL, 15);
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "normal");
+    doc.text("Proyecto desarrollado en React", marginL, 25);
+    doc.setFontSize(9);
+    doc.text("WCAG 2.2 · Nivel AA", marginL, 33);
+
+    y = 50;
+    addMeta("Autor:", "Pablo Garrido");
+    addMeta("Fecha:", today);
+    addMeta("URL:", "https://clinquant-sorbet-043453.netlify.app/");
+    addHR();
+
+    // ── INTRODUCCIÓN ───────────────────────────────────────────
+    addH2("Introducción");
+    addParagraph(
+      "Este documento presenta la auditoría de accesibilidad realizada sobre la web Mandos Rotos, desarrollada con React. El objetivo del análisis ha sido verificar el cumplimiento de los criterios WCAG 2.2 nivel AA y aplicar las correcciones necesarias para mejorar la accesibilidad de la interfaz."
+    );
+    addParagraph(
+      "WCAG (Web Content Accessibility Guidelines) son las pautas internacionales que establecen cómo debe construirse una web para que sea accesible. Nivel AA es el nivel estándar exigido en proyectos profesionales e institucionales."
+    );
+
+    // ── POUR ───────────────────────────────────────────────────
+    addH2("Marco conceptual: principios POUR");
+
+    addH3("Perceptible");
+    addParagraph(
+      "El contenido debe poder percibirse por todos los usuarios. Las imágenes tienen texto alternativo (atributo alt). El contraste entre texto y fondo cumple el mínimo de 4.5:1 para texto normal."
+    );
+
+    addH3("Operable");
+    addParagraph(
+      "La interfaz puede utilizarse completamente con teclado mediante la tecla Tab. El foco es visible en todo momento. Existe un enlace «Saltar al contenido» que permite omitir el menú directamente."
+    );
+
+    addH3("Comprensible");
+    addParagraph(
+      "El contenido es claro. Los formularios muestran mensajes de error en texto, no solo mediante color. Los botones tienen texto descriptivo de la acción real."
+    );
+
+    addH3("Robusto");
+    addParagraph(
+      "El código usa HTML semántico: header, nav, main, footer, article, section. Se utiliza ARIA correctamente para mejorar la compatibilidad con lectores de pantalla."
+    );
+
+    // ── AUDITORÍA INICIAL ──────────────────────────────────────
+    addH2("Auditoría inicial");
+    addParagraph("Herramientas utilizadas: Lighthouse (Chrome DevTools), WAVE, Axe DevTools.");
+
+    checkPage(8);
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(...BLACK);
+    const pw1 = doc.getTextWidth("Puntuación inicial Lighthouse: ");
+    doc.text("Puntuación inicial Lighthouse: ", marginL, y);
+    doc.setTextColor(190, 50, 50);
+    doc.text("72 / 100", marginL + pw1, y);
+    y += 7;
+
+    addParagraph("Principales problemas detectados:");
+    [
+      "Imágenes sin atributo alt descriptivo.",
+      "Contraste insuficiente en textos secundarios (--muted, --muted2).",
+      "Inputs de formulario sin label correctamente vinculado.",
+      "Ausencia de enlace «Saltar al contenido».",
+      "Foco no visible al navegar con teclado.",
+      "Mensajes de error del formulario solo en color, sin texto explicativo.",
+      "Página de Episodios usaba h2 como título principal (debe ser h1).",
+      "Botones con texto ambiguo.",
+      "Barra de progreso del reproductor no accesible con teclado.",
+      "Ausencia de transcripciones en los episodios de audio.",
+    ].forEach(addBullet);
+
+    // ── CORRECCIONES ───────────────────────────────────────────
+    addH2("Correcciones implementadas");
+
+    addH3("Estructura semántica");
+    addParagraph(
+      "Se utilizan header, nav con aria-label, main con id=\"main-content\", footer y article en las tarjetas de episodios. Cada página tiene un único h1 como título principal. Los h2 organizan secciones dentro del main."
+    );
+
+    addH3("Enlace «Saltar al contenido»");
+    addParagraph(
+      "Se añadió un enlace .skip-link al inicio del documento. Es invisible visualmente hasta que recibe el foco con teclado. Permite saltar directamente al main#main-content sin recorrer el menú."
+    );
+
+    addH3("Formulario accesible");
+    addParagraph(
+      "Cada campo tiene un label vinculado con htmlFor/id. Los errores se muestran con texto descriptivo usando aria-describedby y aria-invalid. Se usa aria-live=\"polite\" para anunciar errores dinámicos. Al enviar con errores, el foco se mueve al primer campo incorrecto."
+    );
+
+    addH3("Contraste");
+    addParagraph(
+      "Se ajustaron las variables --muted (de #8a8798 a #9e9aac) y --muted2 (de #5a5868 a #6e6b7c) para cumplir el ratio mínimo de 4.5:1 sobre el fondo oscuro #0c0c0e."
+    );
+
+    addH3("Foco visible");
+    addParagraph(
+      "Se añadió :focus-visible con outline de 2px dorado en index.css, garantizando que todos los elementos interactivos muestren indicador de foco al navegar con Tab."
+    );
+
+    addH3("Reproductor de audio");
+    addParagraph(
+      "El botón tiene aria-label dinámico (\"Reproducir episodio\" / \"Pausar episodio\"). La barra de progreso usa role=\"slider\" con aria-valuemin, aria-valuemax, aria-valuenow y aria-valuetext. Los iconos emoji llevan aria-hidden=\"true\"."
+    );
+
+    addH3("Transcripciones");
+    addParagraph(
+      "Cada episodio incluye un botón «Ver transcripción del episodio» que despliega el texto completo del audio. El botón usa aria-expanded y aria-controls, permitiendo el acceso a personas con discapacidad auditiva."
+    );
+
+    // ── MEJORAS AVANZADAS ──────────────────────────────────────
+    addH2("Mejora avanzada: prefers-reduced-motion");
+    addParagraph(
+      "Se implementó la media query @media (prefers-reduced-motion: reduce) en index.css. Cuando el usuario activa «Reducir movimiento» en su sistema operativo, todas las animaciones (fadeUp, pulse-ring, transiciones CSS) se desactivan automáticamente. Esto beneficia a personas con sensibilidad al movimiento, trastornos vestibulares o migrañas."
+    );
+
+    addH2("Mejora avanzada: botones descriptivos y aria-label");
+    addParagraph(
+      "Se revisaron todos los botones de la web para garantizar texto descriptivo. Los botones con solo iconos tienen aria-label descriptivo y los iconos llevan aria-hidden=\"true\" para que los lectores de pantalla no los anuncien."
+    );
+
+    // ── VALIDACIÓN FINAL ───────────────────────────────────────
+    addH2("Validación final");
+
+    checkPage(8);
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(...BLACK);
+    const pw2 = doc.getTextWidth("Nueva puntuación Lighthouse: ");
+    doc.text("Nueva puntuación Lighthouse: ", marginL, y);
+    doc.setTextColor(40, 160, 80);
+    doc.text("96 / 100", marginL + pw2, y);
+    y += 7;
+
+    addParagraph("La mejora se observa en cuatro aspectos principales:");
+    [
+      "Estructura semántica: uso correcto de header, nav, main, footer y jerarquía de encabezados.",
+      "Formularios: labels vinculados, validación con texto y aria-live para mensajes dinámicos.",
+      "Contraste: todos los textos cumplen ratio mínimo 4.5:1.",
+      "Navegación por teclado: foco visible, skip-link y todos los elementos interactivos accesibles.",
+    ].forEach(addBullet);
+
+    // ── CONCLUSIÓN ─────────────────────────────────────────────
+    addH2("Conclusión");
+    addParagraph(
+      "La web cumple nivel AA en los aspectos evaluados. Se ha mejorado la accesibilidad estructural, funcional y visual. La accesibilidad no consiste únicamente en alcanzar una puntuación, sino en garantizar que cualquier usuario pueda interactuar con la interfaz sin barreras, independientemente de sus capacidades o del dispositivo que utilice."
+    );
+
+    // ── PIE EN TODAS LAS PÁGINAS ───────────────────────────────
+    const totalPages = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= totalPages; i++) {
+      doc.setPage(i);
+      doc.setFontSize(8);
+      doc.setTextColor(...GRAY);
+      doc.setFont("helvetica", "normal");
+      doc.text(
+        `Informe generado automáticamente · ${today} · Página ${i} de ${totalPages}`,
+        pageW / 2,
+        pageH - 8,
+        { align: "center" }
+      );
+    }
+
+    doc.save("informe-accesibilidad-mandos-rotos.pdf");
+    setGenerating(false);
+  };
 
   return (
     <section
@@ -61,6 +322,7 @@ export default function InformePDF() {
 
       <button
         onClick={downloadPDF}
+        disabled={generating}
         aria-label="Descargar informe de auditoría de accesibilidad en formato PDF"
         style={{
           background: "var(--gold)",
@@ -69,223 +331,17 @@ export default function InformePDF() {
           fontSize: 14,
           padding: "12px 24px",
           borderRadius: 10,
-          cursor: "pointer",
+          cursor: generating ? "wait" : "pointer",
           border: "none",
           display: "inline-flex",
           alignItems: "center",
           gap: 8,
+          opacity: generating ? 0.7 : 1,
         }}
       >
         <span aria-hidden="true">⬇</span>
-        Descargar informe de accesibilidad en PDF
+        {generating ? "Generando PDF..." : "Descargar informe de accesibilidad en PDF"}
       </button>
-
-      {/* Contenido del informe usado para generar el PDF */}
-      <div
-        ref={contentRef}
-        style={{
-          fontFamily: "Georgia, serif",
-          fontSize: 12,
-          color: "#111",
-          lineHeight: 1.7,
-          background: "#fff",
-          padding: "40px 50px",
-          // Visualmente oculto en la web pero disponible para html2pdf
-          position: "absolute",
-          left: "-9999px",
-          top: 0,
-          width: "210mm",
-        }}
-      >
-        <h1 style={{ fontSize: 22, marginBottom: 4, color: "#111" }}>
-          Informe de Auditoría de Accesibilidad Web
-        </h1>
-        <p style={{ fontSize: 13, color: "#555", marginBottom: 6 }}>
-          Proyecto desarrollado en React
-        </p>
-        <hr style={{ borderColor: "#ddd", marginBottom: 20 }} />
-
-        {/* ⚠️ RELLENA ESTOS DATOS CON LOS TUYOS ANTES DE ENTREGAR */}
-        <p><strong>Autor:</strong> Pablo Garrido</p>
-        <p><strong>Fecha:</strong> {today}</p>
-        <p><strong>URL del proyecto:</strong> https://clinquant-sorbet-043453.netlify.app/</p>
-
-        <h2 style={{ fontSize: 16, marginTop: 28, color: "#111" }}>Introducción</h2>
-        <p>
-          Este documento presenta la auditoría de accesibilidad realizada sobre la web
-          Mandos Rotos, desarrollada con React. El objetivo del análisis ha sido verificar el
-          cumplimiento de los criterios WCAG 2.2 nivel AA y aplicar las correcciones necesarias
-          para mejorar la accesibilidad de la interfaz.
-        </p>
-        <p>
-          WCAG (Web Content Accessibility Guidelines) son las pautas internacionales que
-          establecen cómo debe construirse una web para que sea accesible. Nivel AA es el nivel
-          estándar exigido en proyectos profesionales e institucionales.
-        </p>
-
-        <h2 style={{ fontSize: 16, marginTop: 28, color: "#111" }}>
-          Marco conceptual aplicado: principios POUR
-        </h2>
-
-        <h3 style={{ fontSize: 14, marginTop: 16, color: "#333" }}>Perceptible</h3>
-        <p>
-          El contenido debe poder percibirse por todos los usuarios. Las imágenes tienen
-          texto alternativo (atributo alt). El contraste entre texto y fondo cumple el
-          mínimo de 4.5:1 para texto normal.
-        </p>
-
-        <h3 style={{ fontSize: 14, marginTop: 16, color: "#333" }}>Operable</h3>
-        <p>
-          La interfaz puede utilizarse completamente con teclado mediante la tecla Tab.
-          El foco es visible en todo momento. Existe un enlace "Saltar al contenido" que
-          permite omitir el menú directamente.
-        </p>
-
-        <h3 style={{ fontSize: 14, marginTop: 16, color: "#333" }}>Comprensible</h3>
-        <p>
-          El contenido es claro. Los formularios muestran mensajes de error en texto, no
-          solo mediante color. Los botones tienen texto descriptivo de la acción real.
-        </p>
-
-        <h3 style={{ fontSize: 14, marginTop: 16, color: "#333" }}>Robusto</h3>
-        <p>
-          El código usa HTML semántico: header, nav, main, footer, article, section.
-          Se utiliza ARIA correctamente para mejorar la compatibilidad con lectores de pantalla.
-        </p>
-
-        <h2 style={{ fontSize: 16, marginTop: 28, color: "#111" }}>Auditoría inicial</h2>
-        <p>Herramientas utilizadas: Lighthouse (Chrome DevTools), WAVE, Axe DevTools.</p>
-        <p><strong>Puntuación inicial Lighthouse:</strong> 72/100</p>
-        <p>Principales problemas detectados:</p>
-        <ul>
-          <li>Imágenes sin atributo alt descriptivo.</li>
-          <li>Contraste insuficiente en textos secundarios (--muted, --muted2).</li>
-          <li>Inputs de formulario sin label correctamente vinculado.</li>
-          <li>Ausencia de enlace "Saltar al contenido".</li>
-          <li>Foco no visible al navegar con teclado.</li>
-          <li>Mensajes de error del formulario solo en color, sin texto explicativo.</li>
-          <li>Página de Episodios usaba h2 como título principal (debe ser h1).</li>
-          <li>Botones con texto ambiguo.</li>
-          <li>Barra de progreso del reproductor no accesible con teclado.</li>
-          <li>Ausencia de transcripciones en los episodios de audio.</li>
-        </ul>
-
-        <h2 style={{ fontSize: 16, marginTop: 28, color: "#111" }}>
-          Correcciones implementadas
-        </h2>
-
-        <h3 style={{ fontSize: 14, marginTop: 16, color: "#333" }}>Estructura semántica</h3>
-        <p>
-          Se utilizan header, nav con aria-label, main con id="main-content", footer y article
-          en las tarjetas de episodios. Cada página tiene un único h1 como título principal.
-          Los h2 organizan secciones dentro del main.
-        </p>
-
-        <h3 style={{ fontSize: 14, marginTop: 16, color: "#333" }}>
-          Enlace "Saltar al contenido"
-        </h3>
-        <p>
-          Se añadió un enlace .skip-link al inicio del documento. Es invisible visualmente
-          hasta que recibe el foco con teclado, momento en que aparece en la parte superior.
-          Permite saltar directamente al main#main-content sin recorrer el menú.
-        </p>
-
-        <h3 style={{ fontSize: 14, marginTop: 16, color: "#333" }}>Formulario accesible</h3>
-        <p>
-          Cada campo tiene un label vinculado con htmlFor/id. Se implementó validación
-          accesible: los errores se muestran con texto descriptivo junto a cada campo
-          (no solo color), usando aria-describedby y aria-invalid. Se usa aria-live="polite"
-          para anunciar errores dinámicos a lectores de pantalla. Al enviar con errores,
-          el foco se mueve al primer campo incorrecto.
-        </p>
-
-        <h3 style={{ fontSize: 14, marginTop: 16, color: "#333" }}>Contraste</h3>
-        <p>
-          Se ajustaron las variables --muted (de #8a8798 a #9e9aac) y --muted2
-          (de #5a5868 a #6e6b7c) para cumplir el ratio mínimo de 4.5:1 sobre el fondo
-          oscuro #0c0c0e.
-        </p>
-
-        <h3 style={{ fontSize: 14, marginTop: 16, color: "#333" }}>Foco visible</h3>
-        <p>
-          Se añadió :focus-visible con outline de 2px dorado en index.css, garantizando
-          que todos los elementos interactivos muestren indicador de foco al navegar con Tab.
-        </p>
-
-        <h3 style={{ fontSize: 14, marginTop: 16, color: "#333" }}>Reproductor de audio</h3>
-        <p>
-          El botón tiene aria-label dinámico ("Reproducir episodio" / "Pausar episodio").
-          La barra de progreso usa role="slider" con aria-valuemin, aria-valuemax,
-          aria-valuenow y aria-valuetext. Los iconos emoji llevan aria-hidden="true".
-        </p>
-
-        <h3 style={{ fontSize: 14, marginTop: 16, color: "#333" }}>Transcripciones</h3>
-        <p>
-          Cada episodio incluye un botón "Ver transcripción del episodio" que despliega
-          el texto completo del audio. El botón usa aria-expanded y aria-controls.
-          Esto permite el acceso al contenido a personas con discapacidad auditiva.
-        </p>
-
-        <h2 style={{ fontSize: 16, marginTop: 28, color: "#111" }}>
-          Mejora avanzada: prefers-reduced-motion
-        </h2>
-        <p>
-          Se implementó la media query @media (prefers-reduced-motion: reduce) en index.css.
-          Cuando el usuario activa "Reducir movimiento" en su sistema operativo, todas las
-          animaciones (fadeUp, pulse-ring, transiciones CSS) se desactivan automáticamente.
-          Las animaciones se sustituyen por estado final inmediato (opacity:1, transform:none).
-          Esto beneficia a personas con sensibilidad al movimiento, trastornos vestibulares
-          o migrañas.
-        </p>
-
-        <h2 style={{ fontSize: 16, marginTop: 28, color: "#111" }}>
-          Mejora avanzada: botones descriptivos y aria-label
-        </h2>
-        <p>
-          Se revisaron todos los botones de la web para garantizar texto descriptivo.
-          Los botones con solo iconos (mute, reproducir) tienen aria-label descriptivo
-          y los iconos llevan aria-hidden="true" para que los lectores de pantalla no
-          los anuncien.
-        </p>
-
-        <h2 style={{ fontSize: 16, marginTop: 28, color: "#111" }}>Validación final</h2>
-        <p>
-          Después de aplicar todas las mejoras, la nueva puntuación obtenida fue{" "}
-          <strong>96/100 en Lighthouse</strong>.
-        </p>
-        <p>La mejora se observa en cuatro aspectos principales:</p>
-        <ul>
-          <li>
-            <strong>Estructura semántica:</strong> uso correcto de header, nav, main, footer
-            y jerarquía de encabezados.
-          </li>
-          <li>
-            <strong>Formularios:</strong> labels vinculados, validación con texto y aria-live
-            para mensajes dinámicos.
-          </li>
-          <li>
-            <strong>Contraste:</strong> todos los textos cumplen ratio mínimo 4.5:1.
-          </li>
-          <li>
-            <strong>Navegación por teclado:</strong> foco visible, skip-link y todos los
-            elementos interactivos accesibles.
-          </li>
-        </ul>
-
-        <h2 style={{ fontSize: 16, marginTop: 28, color: "#111" }}>Conclusión</h2>
-        <p>
-          La web cumple nivel AA en los aspectos evaluados. Se ha mejorado la accesibilidad
-          estructural, funcional y visual. La accesibilidad no consiste únicamente en alcanzar
-          una puntuación, sino en garantizar que cualquier usuario pueda interactuar con la
-          interfaz sin barreras, independientemente de sus capacidades o del dispositivo
-          que utilice.
-        </p>
-
-        <hr style={{ borderColor: "#ddd", marginTop: 32 }} />
-        <p style={{ fontSize: 11, color: "#888" }}>
-          Informe generado automáticamente desde la web · {today}
-        </p>
-      </div>
     </section>
   );
 }

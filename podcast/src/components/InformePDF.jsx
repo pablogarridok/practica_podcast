@@ -138,6 +138,7 @@ export default function InformePDF() {
     addMeta("Autor:", "Pablo Garrido");
     addMeta("Fecha:", today);
     addMeta("URL:", "https://practica-podcast2.netlify.app/");
+    addMeta("Link Repositorio GitHub:", "https://github.com/pablogarridok/practica_podcast");
     addHR();
 
     // ── INTRODUCCIÓN ───────────────────────────────────────────

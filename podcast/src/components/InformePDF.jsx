@@ -137,7 +137,7 @@ export default function InformePDF() {
     y = 50;
     addMeta("Autor:", "Pablo Garrido");
     addMeta("Fecha:", today);
-    addMeta("URL:", "https://clinquant-sorbet-043453.netlify.app/");
+    addMeta("URL:", "https://practica-podcast2.netlify.app/");
     addHR();
 
     // ── INTRODUCCIÓN ───────────────────────────────────────────
